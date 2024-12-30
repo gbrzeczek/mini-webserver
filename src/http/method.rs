@@ -9,13 +9,6 @@ pub enum Method {
 }
 
 impl Method {
-    pub const GET: Method = Method::Get;
-    pub const POST: Method = Method::Post;
-    pub const PUT: Method = Method::Put;
-    pub const DELETE: Method = Method::Delete;
-    pub const PATCH: Method = Method::Patch;
-    pub const OPTIONS: Method = Method::Options;
-
     pub fn parse(s: &str) -> Result<Method, String> {
         let e = match s.to_uppercase().as_str() {
             "GET" => Method::Get,
