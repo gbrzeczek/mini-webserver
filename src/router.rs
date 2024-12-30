@@ -1,6 +1,6 @@
 use std::{collections::HashMap, fs, io::{self, ErrorKind}};
 
-use crate::http::{Method, Request, Response};
+use crate::{config::Config, http::{Method, Request, Response}};
 
 pub fn get_response(request: Request) -> Response {
     let mut headers = HashMap::new();
@@ -43,11 +43,9 @@ fn get_file_contents(request_path: &str) -> Result<Vec<u8>, io::Error> {
     fs::read(file_path)
 }
 
-const BASE_PATH: &str = "wwroot";
-
 fn get_file_path(request_path: &str) -> Result<String, io::Error> {
     let project_dir = std::env::current_dir()?;
-    let base = project_dir.join(BASE_PATH);
+    let base = project_dir.join(Config::base_path());
     let request_path = get_rerouted_path(request_path);
     
     println!("Base: {:?}", base);

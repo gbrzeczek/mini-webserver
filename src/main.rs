@@ -4,6 +4,7 @@ use crate::http::Request;
 
 mod http;
 mod router;
+mod config;
 
 fn main() {
     if let Err(message) = run() {
