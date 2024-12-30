@@ -1,10 +1,15 @@
-use std::{io::{BufReader, Write}, net::{TcpListener, TcpStream}, process};
+use std::{
+    io::{BufReader, Write},
+    net::{TcpListener, TcpStream},
+    process,
+};
 
 use crate::http::Request;
 
+mod config;
+mod file_reader;
 mod http;
 mod router;
-mod config;
 
 fn main() {
     if let Err(message) = run() {
@@ -21,7 +26,9 @@ fn run() -> Result<(), String> {
 
     for stream in listener.incoming() {
         match stream {
-            Ok(stream) => respond_to_listener(stream),
+            Ok(stream) => {
+                std::thread::spawn(|| respond_to_listener(stream));
+            }
             Err(message) => eprintln!("Failed to accept connection: {message}"),
         }
     }
@@ -41,12 +48,11 @@ fn respond_to_listener(mut stream: TcpStream) {
             match response.write_to(&mut stream) {
                 Ok(_) => match stream.flush() {
                     Ok(_) => println!("Response sent"),
-                    Err(message) => eprintln!("Failed when flushing response buffer: {message}")
-                }
-                Err(message) => eprintln!("Failed to send response: {message}")
+                    Err(message) => eprintln!("Failed when flushing response buffer: {message}"),
+                },
+                Err(message) => eprintln!("Failed to send response: {message}"),
             }
         }
         Err(message) => eprintln!("Failed to read incoming stream: {}", message),
     }
 }
-
